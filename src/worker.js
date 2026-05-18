@@ -509,8 +509,8 @@ function getPostHTML(post) {
         <span>${new Date(post.created_at).toLocaleDateString('zh-CN')}</span>
       </div>
       <hr style="margin: 20px 0; border: none; border-top: 1px solid #eee;">
-      <div>${post.content.replace(/\
-/g, '<br>')}</div>
+      <div>${post.content.split('\
+').join('<br>')}</div>
     </article>
   </main>
   <footer>
