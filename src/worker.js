@@ -194,7 +194,7 @@ async function handleAPI(request, env, path) {
   await initDB(env);
 
   // 公开 API（不需要认证）
-  const publicAPIs = ['/api/posts', '/api/post/', '/api/categories', '/api/settings', '/api/stats', '/api/links'];
+  const publicAPIs = ['/api/posts', '/api/post/', '/api/categories', '/api/settings', '/api/stats', '/api/links', '/api/upload', '/images/'];
   const isPublicAPI = publicAPIs.some(api => path.startsWith(api));
 
   // 认证检查（非公开 API 需要认证）
