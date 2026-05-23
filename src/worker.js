@@ -743,10 +743,10 @@ function getFrontendHTML(settings) {
     .post-card:hover { transform: translateY(-4px); box-shadow: 0 8px 24px rgba(114, 93, 66, 0.15); }
     .post-card .post-cover { width: 220px; flex-shrink: 0; background: #e8e0cc; display: flex; align-items: center; justify-content: center; overflow: hidden; }
     .post-card .post-cover img { width: 100%; height: 100%; object-fit: cover; }
-    .post-card .post-content { flex: 1; padding: 20px; display: flex; flex-direction: column; justify-content: space-between; min-width: 0; }
+    .post-card .post-content { flex: 1; padding: 20px; display: flex; flex-direction: column; justify-content: space-between; min-width: 0; overflow: hidden; }
     .post-card h2 { font-size: 1.2em; margin-bottom: 8px; color: #794f27; font-weight: 700; }
     .post-card h2 a { color: #794f27; text-decoration: none; }
-    .post-card .meta { display: flex; gap: 12px; color: #9f927d; font-size: 0.8em; margin-top: 12px; font-weight: 600; }
+    .post-card .meta { display: flex; flex-wrap: nowrap; gap: 12px; color: #9f927d; font-size: 0.8em; margin-top: 12px; font-weight: 600; }
     .post-card a.read-more { display: inline-block; padding: 8px 20px; background: #19c8b9; color: #fff; text-decoration: none; border-radius: 50px; font-size: 0.85em; font-weight: 600; align-self: flex-start; margin-top: 12px; box-shadow: 0 4px 0 0 #11a89b; transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1); }
     .post-card a.read-more:hover { transform: translateY(-1px); box-shadow: 0 5px 0 0 #11a89b; }
     .post-card a.read-more:active { transform: translateY(2px); box-shadow: 0 1px 0 0 #11a89b; }
