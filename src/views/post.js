@@ -9,7 +9,7 @@ export function getPostHTML(post, settings) {
   const siteAuthor = settings.site_author || siteName;
   const siteAvatar = settings.site_avatar || '';
   const favicon = settings.site_favicon || '';
-  const postExcerpt = post.excerpt || (post.content ? post.content.substring(0, 160).replace(/[#*\n]/g, ' ').trim() : '');
+  const postExcerpt = post.excerpt || (post.content ? post.content.substring(0, 160).split('#').join('').split('*').join('').split('\n').join(' ').trim() : '');
 
   return `<!DOCTYPE html>
 <html lang="zh-CN">
@@ -277,8 +277,8 @@ export function getPostHTML(post, settings) {
         // 去掉语言标识行
         var firstNl = codeContent.indexOf(nl);
         if (firstNl !== -1) codeContent = codeContent.substring(firstNl + 1);
-        // 转义 HTML
-        var escaped = codeContent.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+        // 转义 HTML（用 split+join 避免正则）
+        var escaped = codeContent.split('&').join('&amp;').split('<').join('&lt;').split('>').join('&gt;');
         var idx = codeBlocks.length;
         codeBlocks.push(escaped);
         content = content.substring(0, fenceStart) + nl + '%%CODEBLOCK_' + idx + '%%' + nl + content.substring(afterFence + fence.length);
@@ -290,8 +290,8 @@ export function getPostHTML(post, settings) {
         marked.setOptions({ breaks: true, gfm: true });
         html = marked.parse(content);
       } else {
-        html = '<p>' + content.replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/
-/g, '<br>') + '</p>';
+        html = '<p>' + content.split('&').join('&amp;').split('<').join('&lt;').split('>').join('&gt;').split('
+').join('<br>') + '</p>';
       }
 
       // 第三步：还原代码块，用 <pre><code> 包裹 + 语法高亮
@@ -300,7 +300,7 @@ export function getPostHTML(post, settings) {
         var highlighted = codeBlocks[j];
         try {
           if (typeof hljs !== 'undefined') {
-            highlighted = hljs.highlightAuto(codeBlocks[j].replace(/&amp;/g,'&').replace(/&lt;/g,'<').replace(/&gt;/g,'>')).value;
+            highlighted = hljs.highlightAuto(codeBlocks[j].split('&amp;').join('&').split('&lt;').join('<').split('&gt;').join('>')).value;
           }
         } catch(e) { highlighted = codeBlocks[j]; }
         var block = '<pre><code class="hljs">' + highlighted + '</code></pre>';

@@ -198,7 +198,7 @@ export function getFrontendHTML(settings) {
           var tags = post.tags ? post.tags.split(',').map(function(t,i) {
             return '<span style="display:inline-block;padding:3px 12px 3px 16px;background:' + tagColors[i % tagColors.length] + ';color:#fff;font-size:0.7em;font-weight:700;margin-right:10px;position:relative;clip-path:polygon(10px 0, 100% 0, 100% 100%, 10px 100%, 0 50%);filter:drop-shadow(2px 3px 4px rgba(0,0,0,0.35))">' + t.trim() + '</span>';
           }).join('') : '';
-          function stripHtml(str) { return str ? str.replace(/<[^>]*>/g, '').replace(/&lt;/g,'<').replace(/&gt;/g,'>').replace(/&amp;/g,'&').substring(0, 80) : ''; }
+          function stripHtml(str) { return str ? str.split('<').join('').split('>').join('').split('&lt;').join('<').split('&gt;').join('>').split('&amp;').join('&').substring(0, 80) : ''; }
           var rawText = post.excerpt || post.content || '';
           var excerpt = post.password ? '🔒 该文章受到密码保护' : stripHtml(rawText) + (rawText.length > 80 ? '...' : '');
           return '<article class="post-card">' +
