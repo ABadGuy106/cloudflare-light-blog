@@ -263,10 +263,10 @@ export function getPostHTML(post, settings) {
       marked.setOptions({ breaks: true, gfm: true });
       var html = marked.parse(content);
 
-      // 后处理：找到 marked 输出中未被 <pre><code> 包裹的转义 HTML
-      // 将它们包装为代码块，使其获得代码框样式
-      html = html.replace(/(<p>|<br>|^)((?:.*?(?:&lt;\/?[a-zA-Z][^&]*?&gt;).*?[
-]?)+)/gm, function(match, prefix, body) {
+      // 后处理：找到 marked 输出中未被包裹的转义 HTML，包装为代码块
+      var re = new RegExp('(<p>|(?:<br>)?)((?:.*?(?:&lt;\\/?[a-zA-Z][^&]*?&gt;).*?[\
+]?)+)', 'gm');
+      html = html.replace(re, function(match, prefix, body) {
         if (body.indexOf('<pre') !== -1) return match;
         if (body.indexOf('&lt;') === -1) return match;
         return prefix + '<pre><code>' + body.trim() + '</code></pre>';
