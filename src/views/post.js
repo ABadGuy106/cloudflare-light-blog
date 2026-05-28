@@ -303,10 +303,12 @@ export function getPostHTML(post, settings) {
       for (var j=0; j<codeBlocks.length; j++) {
         var cb = codeBlocks[j];
         var safeCode = cb.code.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-        var langAttr = cb.lang ? ' class="language-'+cb.lang+'"' : '';
-        var block = cb.lang !== undefined && cb.code.indexOf(nl) >= 0
-          ? nl+'```'+cb.lang+nl+safeCode+nl+'```'+nl
-          : '`'+safeCode+'`';
+        var block;
+        if (cb.code.indexOf(nl) >= 0) {
+          block = nl + fence + cb.lang + nl + safeCode + nl + fence + nl;
+        } else {
+          block = tick + safeCode + tick;
+        }
         escaped = escaped.replace('___CB_'+j+'___', block);
       }
       return escaped;
