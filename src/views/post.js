@@ -258,61 +258,63 @@ export function getPostHTML(post, settings) {
     .hljs-deletion { color: #ffdcd7; background: rgba(248,81,73,0.15); }
   </style>
   <script>
-    // 在 marked 解析前，转义代码块外部的 HTML 标签（防止 XSS）
-    function sanitizeMarkdown(md) {
-      var result = '';
-      var i = 0;
-      var fence = String.fromCharCode(96) + String.fromCharCode(96) + String.fromCharCode(96);
+    // 预处理 markdown：对所有内容（含代码块内部）的 HTML 标签进行转义
+    // 代码块内容转义后重新包裹，交给 marked 处理
+    function preprocessMarkdown(md) {
+      var fence = String.fromCharCode(96)+String.fromCharCode(96)+String.fromCharCode(96);
       var tick = String.fromCharCode(96);
       var nl = String.fromCharCode(10);
+      var codeBlocks = [];
+      var i = 0;
+      var withoutCode = '';
+
+      // 第一步：提取代码块，用占位符替换
       while (i < md.length) {
-        // 围栏代码块（原样保留，不做转义）
-        if (md[i] === tick && md[i+1] === tick && md[i+2] === tick) {
-          result += fence;
-          i += 3;
-          while (i < md.length) {
-            if (md[i] === nl && md[i+1] === tick && md[i+2] === tick && md[i+3] === tick) {
-              result += nl + fence;
-              i += 4;
-              break;
-            }
-            result += md[i];
-            i++;
-          }
+        if (md[i]===tick && md[i+1]===tick && md[i+2]===tick) {
+          var langEnd = md.indexOf(nl, i+3);
+          if (langEnd === -1) langEnd = i+3;
+          var lang = md.substring(i+3, langEnd).trim();
+          var closeIdx = md.indexOf(nl+fence, langEnd);
+          if (closeIdx === -1) { withoutCode += md.substring(i); break; }
+          var codeContent = md.substring(langEnd+1, closeIdx);
+          codeBlocks.push({lang: lang, code: codeContent});
+          var idx = codeBlocks.length - 1;
+          withoutCode += nl+'___CB_'+idx+'___'+nl;
+          i = closeIdx + 4;
           continue;
         }
-        // 行内代码（原样保留）
         if (md[i] === tick) {
-          var end = md.indexOf(tick, i + 1);
-          if (end === -1) { result += md.substring(i); break; }
-          result += md.substring(i, end + 1);
-          i = end + 1;
+          var end = md.indexOf(tick, i+1);
+          if (end === -1) { withoutCode += md.substring(i); break; }
+          var inline = md.substring(i+1, end);
+          codeBlocks.push({lang:'', code:inline});
+          withoutCode += '___CB_'+(codeBlocks.length-1)+'___';
+          i = end+1;
           continue;
         }
-        // HTML 标签 → 转义
-        if (md[i] === '<') {
-          var close = md.indexOf('>', i);
-          if (close !== -1) {
-            var tagContent = md.substring(i + 1, close);
-            if (/^\\/?[a-zA-Z!\\[\\-]/.test(tagContent)) {
-              result += '&lt;' + tagContent + '&gt;';
-              i = close + 1;
-              continue;
-            }
-          }
-          result += '&lt;';
-          i++;
-          continue;
-        }
-        result += md[i];
+        withoutCode += md[i];
         i++;
       }
-      return result;
+
+      // 第二步：对非代码块内容转义 HTML
+      var escaped = withoutCode.replace(/</g, '&lt;').replace(/>/g, '&gt;');
+
+      // 第三步：还原代码块，对代码内容也转义 HTML
+      for (var j=0; j<codeBlocks.length; j++) {
+        var cb = codeBlocks[j];
+        var safeCode = cb.code.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+        var langAttr = cb.lang ? ' class="language-'+cb.lang+'"' : '';
+        var block = cb.lang !== undefined && cb.code.indexOf(nl) >= 0
+          ? nl+'```'+cb.lang+nl+safeCode+nl+'```'+nl
+          : '`'+safeCode+'`';
+        escaped = escaped.replace('___CB_'+j+'___', block);
+      }
+      return escaped;
     }
 
     document.addEventListener('DOMContentLoaded', function() {
       var content = ${JSON.stringify(post.content)};
-      var safe = sanitizeMarkdown(content);
+      var safe = preprocessMarkdown(content);
       marked.setOptions({ breaks: true, gfm: true });
       document.getElementById('post-content').innerHTML = marked.parse(safe);
       document.querySelectorAll('pre code').forEach(function(block) { hljs.highlightElement(block); });
