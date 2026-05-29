@@ -48,7 +48,7 @@ export function getFrontendHTML(settings) {
     .post-card .post-cover { width: 220px; flex-shrink: 0; background: #e8e0cc; display: flex; align-items: center; justify-content: center; overflow: hidden; }
     .post-card .post-cover img { width: 100%; height: 100%; object-fit: cover; }
     .post-card .post-content { flex: 1; padding: 20px; display: flex; flex-direction: column; justify-content: space-between; min-width: 0; overflow: hidden; }
-    .post-card h2 { font-size: 1.2em; margin-bottom: 8px; color: #794f27; font-weight: 700; }
+    .post-card h2 { font-size: 1.35em; margin-bottom: 8px; color: #794f27; font-weight: 700; }
     .post-card h2 a { color: #794f27; text-decoration: none; }
     .post-card .meta { display: flex; flex-wrap: nowrap; align-items: center; gap: 12px; color: #9f927d; font-size: 0.8em; margin-top: 12px; font-weight: 600; }
     .post-card a.read-more { display: inline-block; padding: 6px 16px; background: #19c8b9; color: #fff; text-decoration: none; border-radius: 50px; font-size: 0.8em; font-weight: 600; box-shadow: 0 3px 0 0 #11a89b; transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1); white-space: nowrap; }
@@ -193,7 +193,7 @@ export function getFrontendHTML(settings) {
 
         var formatDate = function(d) { var dt = new Date(d); return dt.getFullYear() + String(dt.getMonth()+1).padStart(2,'0'); };
         html += posts.map(function(post) {
-          var cover = post.cover_image ? '<img src="' + post.cover_image + '" alt="' + post.title + '" loading="lazy">' : '<span style="color:#9f927d">暂无封面</span>';
+          var cover = post.cover_image ? '<img src="' + post.cover_image + '" alt="' + post.title + '" loading="lazy">' : '<span style="color:#9f927d">封面</span>';
           var tags = post.tags ? post.tags.split(',').map(function(t) {
             return '<span style="display:inline-block;padding:3px 10px;background:#e6f5f0;color:#3a7a6a;font-size:0.72em;font-weight:700;margin-right:8px;border:1px solid #b8ddd0;border-radius:4px;box-shadow:1px 2px 3px rgba(58,122,106,0.12)">' + t.trim() + '</span>';
           }).join('') : '';
@@ -204,8 +204,8 @@ export function getFrontendHTML(settings) {
             '<div class="post-cover">' + cover + '</div>' +
             '<div class="post-content">' +
               '<h2><a href="/post/' + formatDate(post.created_at) + '/' + post.id + '">' + post.title + '</a></h2>' +
-              '<p style="color:#725d42;font-size:0.9em;line-height:1.5;margin:8px 0">' + excerpt + '</p>' +
-              (tags ? '<div style="margin:8px 0">' + tags + '</div>' : '') +
+              '<p style="color:#725d42;font-size:0.9em;line-height:1.7;margin:8px 0">' + excerpt + '</p>' +
+              (tags ? '<div style="margin:12px 0 4px">' + tags + '</div>' : '') +
               '<div style="display:flex;justify-content:space-between;align-items:center;margin-top:12px">' +
                 '<div class="meta"><span>' + post.category + '</span><span>' + new Date(post.created_at).toLocaleDateString('zh-CN') + '</span></div>' +
                 '<a class="read-more" href="/post/' + formatDate(post.created_at) + '/' + post.id + '">阅读更多</a>' +
