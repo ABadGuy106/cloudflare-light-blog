@@ -251,7 +251,7 @@ async function handleGetStats(env) {
     tagCount.results.forEach(r => {
       if (r.tags) r.tags.split(',').forEach(t => { const s = t.trim(); if (s) tagSet.add(s); });
     });
-  });
+  }
 
   const resp = json({
     postCount: postCount?.cnt ?? 0,
