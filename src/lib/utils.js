@@ -13,27 +13,28 @@ export function json(data, status = 200) {
 /**
  * CSP 头（适度宽松，允许 CDN 和内联脚本/样式）
  */
-export const CSP_HEADER = "script-src 'self' https://cdn.jsdelivr.net 'unsafe-inline'; style-src 'self' https://fonts.googleapis.com 'unsafe-inline'; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob: https:; connect-src 'self';";
+export const CSP_HEADER = "default-src 'self'; script-src 'self' https://cdn.jsdelivr.net 'unsafe-inline'; style-src 'self' https://fonts.googleapis.com 'unsafe-inline'; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob: https:; connect-src 'self';";
 
 /**
- * HTTP 安全头
+ * HTTP 安全头（API 响应使用）
  */
 export const SECURITY_HEADERS = {
   'X-Content-Type-Options': 'nosniff',
-  'X-Frame-Options': 'DENY',
+  'X-Frame-Options': 'SAMEORIGIN',
   'Referrer-Policy': 'strict-origin-when-cross-origin'
 };
 
 /**
- * HTML 响应（带 CSP + 安全头）
+ * HTML 响应（带安全头，CSP 通过 meta 标签设置以避免阻塞 CDN）
  */
 export function html(content, status = 200) {
   return new Response(content, {
     status,
     headers: {
       'Content-Type': 'text/html; charset=utf-8',
-      'Content-Security-Policy': CSP_HEADER,
-      ...SECURITY_HEADERS
+      'X-Content-Type-Options': 'nosniff',
+      'X-Frame-Options': 'SAMEORIGIN',
+      'Referrer-Policy': 'strict-origin-when-cross-origin'
     }
   });
 }
